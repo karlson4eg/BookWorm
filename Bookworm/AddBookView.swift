@@ -7,6 +7,18 @@
 
 import SwiftUI
 
+extension String {
+    func isEmptyOrWhitespace() -> Bool {
+        
+        // Check empty string
+        if self.isEmpty {
+            return true
+        }
+        // Trim and check empty string
+        return (self.trimmingCharacters(in: .whitespaces) == "")
+    }
+}
+
 struct AddBookView: View {
     @Environment(\.managedObjectContext) var moc
     @Environment(\.dismiss) var dismiss
@@ -16,6 +28,7 @@ struct AddBookView: View {
     @State private var rating = 3
     @State private var genre = ""
     @State private var review = ""
+    @State private var dateAdded = Date.now
     
     let genres = ["Fantasy", "Horror", "Kids", "Mystery", "Poetry", "Romance", "Thriller"]
     
@@ -54,12 +67,22 @@ struct AddBookView: View {
                         try? moc.save()
                         dismiss()
                     }
+                    .disabled(addBookFieldsAreValid() == false)
                 }
                 
             }.navigationTitle("Add Book")
         }
         
     }
+    
+    
+    func addBookFieldsAreValid() -> Bool{
+        if title.isEmptyOrWhitespace() || author.isEmptyOrWhitespace() || genre.isEmpty {
+            return false
+        }
+        return true
+    }
+
 }
 
 struct AddBookView_Previews: PreviewProvider {
